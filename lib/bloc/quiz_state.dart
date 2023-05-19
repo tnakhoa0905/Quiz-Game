@@ -35,3 +35,12 @@ class QuizSuccessed extends QuizState {
   @override
   List<Object?> get props => [quizIndex];
 }
+
+class QuizChecked extends QuizState {
+  final bool ans;
+  final String DapAn;
+  QuizChecked({required this.ans, required this.DapAn});
+
+  @override
+  List<Object?> get props => [ans];
+}

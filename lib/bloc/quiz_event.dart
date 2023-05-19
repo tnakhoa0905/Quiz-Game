@@ -16,3 +16,18 @@ class QuizSuccess extends QuizEvent {
   // TODO: implement props
   List<Object?> get props => [];
 }
+
+class QuizCheckResult extends QuizEvent {
+  String ans;
+  String DapAn;
+  QuizModel quizModel;
+  String indexAns;
+  QuizCheckResult(
+      {required this.ans,
+      required this.DapAn,
+      required this.quizModel,
+      required this.indexAns});
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}

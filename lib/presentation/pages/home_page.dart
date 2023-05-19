@@ -11,12 +11,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int indexList = 0;
   @override
   void initState() {
     // TODO: implement initState
 
     super.initState();
-    // print(BlocProvider.of<QuizBloc>(context));
+    // print(BlocProvider.of<QuizBloc>(context).state);
     // print('khoa đẹp trai 123456');
   }
 
@@ -59,9 +60,9 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                     width: MediaQuery.of(context).size.width * 9 / 10,
                     child: Image.asset("assets/images/home_page/content.png")),
-                const Text(
-                  'Cấp độ 1',
-                  style: TextStyle(
+                Text(
+                  'Cấp độ ${indexList + 1}',
+                  style: const TextStyle(
                       fontFamily: "UTM_Cookies",
                       fontSize: 48,
                       color: Color(0xFFFFfc00)),
@@ -74,7 +75,8 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const PlayScreen()),
+                          builder: (context) =>
+                              PlayScreen(indexList: indexList)),
                     );
                   },
                   child: Container(

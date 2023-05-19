@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       create: (context) => QuizRepository(),
       child: BlocProvider<QuizBloc>(
         create: (context) =>
-            QuizBloc(context.read<QuizRepository>())..fetchQuiz,
+            QuizBloc(context.read<QuizRepository>())..fetchQuiz(),
         child: const MaterialApp(
           debugShowCheckedModeBanner: false,
           home: HomePage(),

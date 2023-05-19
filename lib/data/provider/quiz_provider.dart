@@ -9,8 +9,8 @@ class QuizProvider extends IQuizRepository {
   @override
   Future<QuizModel> getQuizs() async {
     final response = await http.get(Uri.parse(url));
-    print(response);
-    print("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
+    // print(response);
+    // print("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
     if (response.statusCode == 200) {
       return QuizModel.fromJson(jsonDecode(response.body));
     } else {

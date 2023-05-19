@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:do_vui_app/bloc/quiz_bloc.dart';
 import 'package:do_vui_app/bloc/quiz_event.dart';
 import 'package:do_vui_app/bloc/quiz_state.dart';
@@ -6,25 +8,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PlayScreen extends StatefulWidget {
-  const PlayScreen({super.key});
+  int indexList;
+  PlayScreen({super.key, required this.indexList});
 
   @override
   State<PlayScreen> createState() => _PlayScreenState();
 }
 
 class _PlayScreenState extends State<PlayScreen> {
-  var indexLists = 0;
-  bool isCorrect = false;
+  bool isCorrectA = false;
+  bool isCorrectB = false;
+  bool isCorrectC = false;
+  bool isCorrectD = false;
+  int heart = 5;
+
+  late QuizBloc quizBloc;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    print('object');
-    print("aaa");
-    BlocProvider.of<QuizBloc>(context).add(FectchQuiz());
+    // print('object');
+    // print("aaa");
+    quizBloc = BlocProvider.of<QuizBloc>(context);
+    print("state nè ${quizBloc.state}");
+    // _quizBloc.fetchQuiz();
     // print(BlocProvider.of<QuizBloc>(context).add(FectchQuiz()));
-    print('*-*-*-*-*-*-*-*-*-*-*-*-*');
+    // print('*-*-*-*-*-*-*-*-*-*-*-*-*');
   }
 
   @override
@@ -32,22 +42,15 @@ class _PlayScreenState extends State<PlayScreen> {
     return SafeArea(
       child: Scaffold(
         body: BlocBuilder<QuizBloc, QuizState>(
+          bloc: quizBloc,
           builder: (context, state) {
-            print(state);
             if (state is LoadingQuiz) {
-              print("loaidng");
               return CircularProgressIndicator();
-            }
-            if (state is FailedQuiz) {
-              print("failed");
-              return Container(
-                child: Text(state.message),
-              );
             }
 
             if (state is LoadedQuiz) {
-              print("loađed");
-              print(indexLists);
+              // print("loađed");
+              // print(widget.indexList);
               return Stack(children: [
                 SizedBox(
                     height: double.infinity,
@@ -63,15 +66,18 @@ class _PlayScreenState extends State<PlayScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: 24,
-                          backgroundImage: const AssetImage(
-                              'assets/images/play_page/btn.png'),
-                          child: Image.asset(
-                            "assets/images/play_page/btn_back.png",
-                            // height: 40,
-                            width: 20,
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            radius: 24,
+                            backgroundImage: const AssetImage(
+                                'assets/images/play_page/btn.png'),
+                            child: Image.asset(
+                              "assets/images/play_page/btn_back.png",
+                              // height: 40,
+                              width: 20,
+                            ),
                           ),
                         ),
                         const Spacer(),
@@ -79,9 +85,9 @@ class _PlayScreenState extends State<PlayScreen> {
                           "assets/images/play_page/heart.png",
                           width: 40,
                         ),
-                        const Text(
-                          '5',
-                          style: TextStyle(
+                        Text(
+                          '$heart',
+                          style: const TextStyle(
                               fontFamily: "UTM_Cookies", fontSize: 30),
                         ),
                         const Spacer(),
@@ -118,13 +124,13 @@ class _PlayScreenState extends State<PlayScreen> {
                               height: 44,
                             ),
                             Text(
-                              'Cấp độ ${indexLists + 1}',
+                              'Cấp độ ${widget.indexList + 1}',
                               style: TextStyle(
                                   fontFamily: 'UTM_Cookies',
                                   fontSize: 40,
                                   color: Color(0xFFfffc00)),
                             ),
-                            Text(state.quizModel.data[indexLists].cauHoi,
+                            Text(state.quizModel.data[widget.indexList].cauHoi,
                                 style: const TextStyle(
                                     fontSize: 24, color: Color(0xFFffa515)))
                           ],
@@ -134,16 +140,15 @@ class _PlayScreenState extends State<PlayScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        print('a');
-                        if (state.quizModel.data[indexLists].dapAn
-                            .contains(state.quizModel.data[indexLists].a)) {
-                          setState(() {
-                            isCorrect = true;
-                          });
-                          Future.delayed(Duration(seconds: 1), () {
-                            _dialogBuilder(context, "hehe", state.quizModel);
-                          });
-                        }
+                        quizBloc.add(QuizCheckResult(
+                            indexAns: "a",
+                            ans: state.quizModel.data[widget.indexList].a,
+                            DapAn: state.quizModel.data[widget.indexList].dapAn,
+                            quizModel: state.quizModel));
+
+                        Future.delayed(Duration(seconds: 1), () {
+                          _dialogBuilder(context, state.quizModel);
+                        });
                       },
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.9,
@@ -152,11 +157,27 @@ class _PlayScreenState extends State<PlayScreen> {
                           Stack(children: [
                             Align(
                               alignment: Alignment.centerRight,
-                              child: Image(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  image: const AssetImage(
-                                      "assets/images/play_page/ans.png")),
+                              child: BlocListener<QuizBloc, QuizState>(
+                                bloc: quizBloc,
+                                listener: ((context, state) {
+                                  print("khoa đẹp try");
+
+                                  if (state is QuizChecked) {
+                                    if (state.DapAn.contains("a")) {
+                                      isCorrectA = state.ans;
+                                    }
+                                    print(state.DapAn);
+                                  }
+                                }),
+                                child: Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    image: isCorrectA == false
+                                        ? const AssetImage(
+                                            "assets/images/play_page/ans.png")
+                                        : const AssetImage(
+                                            "assets/images/play_page/ans_correct.png")),
+                              ),
                             ),
                             Align(
                                 alignment: Alignment.centerLeft,
@@ -169,7 +190,8 @@ class _PlayScreenState extends State<PlayScreen> {
                                     ),
                                     Expanded(
                                       child: Text(
-                                        state.quizModel.data[indexLists].a,
+                                        state
+                                            .quizModel.data[widget.indexList].a,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontSize: 18,
@@ -210,16 +232,14 @@ class _PlayScreenState extends State<PlayScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        print('b');
-                        if (state.quizModel.data[indexLists].dapAn
-                            .contains(state.quizModel.data[indexLists].b)) {
-                          setState(() {
-                            isCorrect = true;
-                          });
-                          Future.delayed(Duration(seconds: 1), () {
-                            _dialogBuilder(context, "hehe", state.quizModel);
-                          });
-                        }
+                        quizBloc.add(QuizCheckResult(
+                            indexAns: "b",
+                            ans: state.quizModel.data[widget.indexList].b,
+                            DapAn: state.quizModel.data[widget.indexList].dapAn,
+                            quizModel: state.quizModel));
+                        Future.delayed(Duration(seconds: 1), () {
+                          _dialogBuilder(context, state.quizModel);
+                        });
                       },
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.9,
@@ -228,11 +248,27 @@ class _PlayScreenState extends State<PlayScreen> {
                           Stack(children: [
                             Align(
                               alignment: Alignment.centerRight,
-                              child: Image(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  image: const AssetImage(
-                                      "assets/images/play_page/ans.png")),
+                              child: BlocListener<QuizBloc, QuizState>(
+                                bloc: quizBloc,
+                                listener: ((context, state) {
+                                  print("khoa đẹp try");
+                                  print(state);
+                                  if (state is QuizChecked) {
+                                    if (state.DapAn.contains("b")) {
+                                      isCorrectB = state.ans;
+                                    }
+                                    print(state.DapAn);
+                                  }
+                                }),
+                                child: Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    image: isCorrectB == false
+                                        ? const AssetImage(
+                                            "assets/images/play_page/ans.png")
+                                        : const AssetImage(
+                                            "assets/images/play_page/ans_correct.png")),
+                              ),
                             ),
                             Align(
                                 alignment: Alignment.centerLeft,
@@ -245,7 +281,8 @@ class _PlayScreenState extends State<PlayScreen> {
                                     ),
                                     Expanded(
                                       child: Text(
-                                        state.quizModel.data[indexLists].b,
+                                        state
+                                            .quizModel.data[widget.indexList].b,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontSize: 18,
@@ -288,16 +325,14 @@ class _PlayScreenState extends State<PlayScreen> {
                     // Todo test case
                     GestureDetector(
                       onTap: () {
-                        print('c');
-                        if (state.quizModel.data[indexLists].dapAn
-                            .contains(state.quizModel.data[indexLists].c)) {
-                          setState(() {
-                            isCorrect = true;
-                          });
-                          Future.delayed(Duration(seconds: 1), () {
-                            _dialogBuilder(context, "hehe", state.quizModel);
-                          });
-                        }
+                        quizBloc.add(QuizCheckResult(
+                            indexAns: "c",
+                            ans: state.quizModel.data[widget.indexList].c,
+                            DapAn: state.quizModel.data[widget.indexList].dapAn,
+                            quizModel: state.quizModel));
+                        Future.delayed(Duration(seconds: 1), () {
+                          _dialogBuilder(context, state.quizModel);
+                        });
                       },
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.9,
@@ -309,10 +344,10 @@ class _PlayScreenState extends State<PlayScreen> {
                               child: Image(
                                   width:
                                       MediaQuery.of(context).size.width * 0.8,
-                                  image: isCorrect == false
-                                      ? AssetImage(
+                                  image: isCorrectC == false
+                                      ? const AssetImage(
                                           "assets/images/play_page/ans.png")
-                                      : AssetImage(
+                                      : const AssetImage(
                                           "assets/images/play_page/ans_correct.png")),
                             ),
                             Align(
@@ -326,7 +361,8 @@ class _PlayScreenState extends State<PlayScreen> {
                                     ),
                                     Expanded(
                                       child: Text(
-                                        state.quizModel.data[indexLists].c,
+                                        state
+                                            .quizModel.data[widget.indexList].c,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontSize: 18,
@@ -367,16 +403,14 @@ class _PlayScreenState extends State<PlayScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        print('d');
-                        if (state.quizModel.data[indexLists].dapAn
-                            .contains(state.quizModel.data[indexLists].d)) {
-                          setState(() {
-                            isCorrect = true;
-                          });
-                          Future.delayed(Duration(seconds: 1), () {
-                            _dialogBuilder(context, "hehe", state.quizModel);
-                          });
-                        }
+                        quizBloc.add(QuizCheckResult(
+                            indexAns: "d",
+                            ans: state.quizModel.data[widget.indexList].d,
+                            DapAn: state.quizModel.data[widget.indexList].dapAn,
+                            quizModel: state.quizModel));
+                        Future.delayed(const Duration(milliseconds: 500), () {
+                          _dialogBuilder(context, state.quizModel);
+                        });
                       },
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.9,
@@ -388,8 +422,11 @@ class _PlayScreenState extends State<PlayScreen> {
                               child: Image(
                                   width:
                                       MediaQuery.of(context).size.width * 0.8,
-                                  image: const AssetImage(
-                                      "assets/images/play_page/ans.png")),
+                                  image: isCorrectD == false
+                                      ? const AssetImage(
+                                          "assets/images/play_page/ans.png")
+                                      : const AssetImage(
+                                          "assets/images/play_page/ans_correct.png")),
                             ),
                             Align(
                                 alignment: Alignment.centerLeft,
@@ -402,7 +439,8 @@ class _PlayScreenState extends State<PlayScreen> {
                                     ),
                                     Expanded(
                                       child: Text(
-                                        state.quizModel.data[indexLists].d,
+                                        state
+                                            .quizModel.data[widget.indexList].d,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontSize: 18,
@@ -458,8 +496,7 @@ class _PlayScreenState extends State<PlayScreen> {
     );
   }
 
-  Future<void> _dialogBuilder(
-      BuildContext context, String title, QuizModel? model) {
+  Future<void> _dialogBuilder(BuildContext contex, QuizModel? model) {
     var sizeW = MediaQuery.of(context).size.width;
     var sizeH = MediaQuery.of(context).size.height;
     return showDialog<void>(
@@ -508,7 +545,9 @@ class _PlayScreenState extends State<PlayScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              '$title',
+                              model!.data[widget.indexList].giaiThich.isEmpty
+                                  ? "bạn thật tài giỏi"
+                                  : model.data[widget.indexList].giaiThich,
                               maxLines: 4,
                               overflow: TextOverflow.ellipsis,
                               style:
@@ -532,15 +571,19 @@ class _PlayScreenState extends State<PlayScreen> {
                               ))),
                       child: GestureDetector(
                         onTap: () {
-                          if (indexLists == model!.data.length - 1) {
-                            indexLists = 0;
+                          if (widget.indexList == model.data.length - 1) {
+                            widget.indexList = 0;
                           } else {
-                            indexLists++;
+                            widget.indexList++;
                           }
-                          isCorrect = false;
+                          isCorrectA = false;
+                          isCorrectB = false;
+                          isCorrectC = false;
+                          isCorrectD = false;
+                          // print(quizBloc.state);
+                          quizBloc.add(QuizSuccess(
+                              index: widget.indexList, model: model));
                           Navigator.pop(context);
-                          context.read<QuizBloc>().add(
-                              QuizSuccess(index: indexLists, model: model));
                         },
                         child: const Center(
                             child: Text(
