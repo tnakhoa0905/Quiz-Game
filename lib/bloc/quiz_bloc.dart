@@ -29,6 +29,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   void _fetchSuccess(QuizSuccess event, Emitter<QuizState> emit) {
     try {
       emit(QuizSuccessed(quizIndex: event.index));
+
       swapAns(event.model, event.index);
       emit(LoadedQuiz(quizModel: event.model));
     } catch (e) {

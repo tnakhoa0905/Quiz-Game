@@ -20,6 +20,7 @@ class _PlayScreenState extends State<PlayScreen> {
   bool isCorrectB = false;
   bool isCorrectC = false;
   bool isCorrectD = false;
+  String result = "";
   int heart = 5;
 
   late QuizBloc quizBloc;
@@ -49,6 +50,9 @@ class _PlayScreenState extends State<PlayScreen> {
             }
 
             if (state is LoadedQuiz) {
+              // if (state is QuizChecked) {
+              //   print(state.DapAn);
+              // }
               // print("loađed");
               // print(widget.indexList);
               return Stack(children: [
@@ -160,13 +164,12 @@ class _PlayScreenState extends State<PlayScreen> {
                               child: BlocListener<QuizBloc, QuizState>(
                                 bloc: quizBloc,
                                 listener: ((context, state) {
-                                  print("khoa đẹp try");
+                                  // print("khoa đẹp try");
 
                                   if (state is QuizChecked) {
                                     if (state.DapAn.contains("a")) {
                                       isCorrectA = state.ans;
                                     }
-                                    print(state.DapAn);
                                   }
                                 }),
                                 child: Image(
@@ -251,13 +254,13 @@ class _PlayScreenState extends State<PlayScreen> {
                               child: BlocListener<QuizBloc, QuizState>(
                                 bloc: quizBloc,
                                 listener: ((context, state) {
-                                  print("khoa đẹp try");
-                                  print(state);
+                                  // print("khoa đẹp try");
+                                  // print(state);
                                   if (state is QuizChecked) {
                                     if (state.DapAn.contains("b")) {
                                       isCorrectB = state.ans;
                                     }
-                                    print(state.DapAn);
+                                    // print(state.DapAn);
                                   }
                                 }),
                                 child: Image(
@@ -341,14 +344,27 @@ class _PlayScreenState extends State<PlayScreen> {
                           Stack(children: [
                             Align(
                               alignment: Alignment.centerRight,
-                              child: Image(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  image: isCorrectC == false
-                                      ? const AssetImage(
-                                          "assets/images/play_page/ans.png")
-                                      : const AssetImage(
-                                          "assets/images/play_page/ans_correct.png")),
+                              child: BlocListener<QuizBloc, QuizState>(
+                                bloc: quizBloc,
+                                listener: ((context, state) {
+                                  // print("khoa đẹp try");
+                                  // print(state);
+                                  if (state is QuizChecked) {
+                                    if (state.DapAn.contains("c")) {
+                                      isCorrectC = state.ans;
+                                    }
+                                    // print(state.DapAn);
+                                  }
+                                }),
+                                child: Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    image: isCorrectC == false
+                                        ? const AssetImage(
+                                            "assets/images/play_page/ans.png")
+                                        : const AssetImage(
+                                            "assets/images/play_page/ans_correct.png")),
+                              ),
                             ),
                             Align(
                                 alignment: Alignment.centerLeft,
@@ -419,14 +435,27 @@ class _PlayScreenState extends State<PlayScreen> {
                           Stack(children: [
                             Align(
                               alignment: Alignment.centerRight,
-                              child: Image(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  image: isCorrectD == false
-                                      ? const AssetImage(
-                                          "assets/images/play_page/ans.png")
-                                      : const AssetImage(
-                                          "assets/images/play_page/ans_correct.png")),
+                              child: BlocListener<QuizBloc, QuizState>(
+                                bloc: quizBloc,
+                                listener: ((context, state) {
+                                  // print("khoa đẹp try");
+                                  // print(state);
+                                  if (state is QuizChecked) {
+                                    if (state.DapAn.contains("d")) {
+                                      isCorrectD = state.ans;
+                                    }
+                                    // print(state.DapAn);
+                                  }
+                                }),
+                                child: Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    image: isCorrectD == false
+                                        ? const AssetImage(
+                                            "assets/images/play_page/ans.png")
+                                        : const AssetImage(
+                                            "assets/images/play_page/ans_correct.png")),
+                              ),
                             ),
                             Align(
                                 alignment: Alignment.centerLeft,
