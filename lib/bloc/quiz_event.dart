@@ -19,14 +19,11 @@ class QuizSuccess extends QuizEvent {
 
 class QuizCheckResult extends QuizEvent {
   String ans;
-  String DapAn;
+  int indexList;
   QuizModel quizModel;
-  String indexAns;
+
   QuizCheckResult(
-      {required this.ans,
-      required this.DapAn,
-      required this.quizModel,
-      required this.indexAns});
+      {required this.ans, required this.indexList, required this.quizModel});
   @override
   // TODO: implement props
   List<Object?> get props => [];

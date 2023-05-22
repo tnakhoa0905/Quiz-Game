@@ -38,11 +38,30 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   }
 
   void _checkSuccess(QuizCheckResult event, Emitter<QuizState> emit) {
-    if (event.ans.contains(event.DapAn)) {
-      emit(QuizChecked(ans: true, DapAn: event.indexAns));
-    } else {
-      emit(QuizChecked(ans: false, DapAn: event.indexAns));
+    String result = "";
+
+    if (event.quizModel.data[event.indexList].a
+        .contains(event.quizModel.data[event.indexList].dapAn)) {
+      result = "a";
     }
+    if (event.quizModel.data[event.indexList].b
+        .contains(event.quizModel.data[event.indexList].dapAn)) {
+      result = "b";
+    }
+    if (event.quizModel.data[event.indexList].c
+        .contains(event.quizModel.data[event.indexList].dapAn)) {
+      result = "c";
+    }
+    if (event.quizModel.data[event.indexList].d
+        .contains(event.quizModel.data[event.indexList].dapAn)) {
+      result = "d";
+    }
+    if (event.ans.contains(result)) {
+      emit(QuizChecked(ansChecked: true, ansState: true, ans: result));
+    } else {
+      emit(QuizChecked(ansChecked: true, ans: result));
+    }
+
     emit(LoadedQuiz(quizModel: event.quizModel));
   }
 

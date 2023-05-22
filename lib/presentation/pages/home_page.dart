@@ -17,8 +17,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
 
     super.initState();
-    // print(BlocProvider.of<QuizBloc>(context).state);
-    // print('khoa đẹp trai 123456');
+    print(BlocProvider.of<QuizBloc>(context).state);
   }
 
   @override
@@ -81,7 +80,6 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.51,
-                    // height: 100,
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 20),
                     decoration: const BoxDecoration(
                       image: DecorationImage(
