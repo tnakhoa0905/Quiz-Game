@@ -3,6 +3,8 @@ import 'package:do_vui_app/presentation/pages/play_screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/provider/core.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -11,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int indexList = 0;
   @override
   void initState() {
     // TODO: implement initState
@@ -73,9 +74,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              PlayScreen(indexList: indexList)),
+                      MaterialPageRoute(builder: (context) => PlayScreen()),
                     );
                   },
                   child: Container(

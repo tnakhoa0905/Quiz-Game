@@ -6,10 +6,10 @@ import 'package:do_vui_app/bloc/quiz_state.dart';
 import 'package:do_vui_app/data/quizModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:do_vui_app/data/provider/core.dart';
 
 class PlayScreen extends StatefulWidget {
-  int indexList;
-  PlayScreen({super.key, required this.indexList});
+  PlayScreen({super.key});
 
   @override
   State<PlayScreen> createState() => _PlayScreenState();
@@ -22,7 +22,7 @@ class _PlayScreenState extends State<PlayScreen>
   bool isCorrectC = false;
   bool isCorrectD = false;
   String result = "";
-  int heart = 5;
+
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -68,7 +68,7 @@ class _PlayScreenState extends State<PlayScreen>
           bloc: quizBloc,
           builder: (context, state) {
             if (state is LoadedQuiz) {
-              result = state.quizModel.data[widget.indexList].dapAn;
+              result = state.quizModel.data[heart].dapAn;
 
               return Stack(children: [
                 SizedBox(
@@ -152,13 +152,13 @@ class _PlayScreenState extends State<PlayScreen>
                               height: 44,
                             ),
                             Text(
-                              'Cấp độ ${widget.indexList + 1}',
+                              'Cấp độ ${indexList + 1}',
                               style: const TextStyle(
                                   fontFamily: 'UTM_Cookies',
                                   fontSize: 40,
                                   color: Color(0xFFfffc00)),
                             ),
-                            Text(state.quizModel.data[widget.indexList].cauHoi,
+                            Text(state.quizModel.data[indexList].cauHoi,
                                 style: const TextStyle(
                                     fontSize: 24, color: Color(0xFFffa515)))
                           ],
@@ -170,7 +170,7 @@ class _PlayScreenState extends State<PlayScreen>
                       onTap: () {
                         quizBloc.add(QuizCheckResult(
                             ans: "a",
-                            indexList: widget.indexList,
+                            indexList: indexList,
                             quizModel: state.quizModel));
 
                         _dialogBuilder(context, state.quizModel);
@@ -212,8 +212,7 @@ class _PlayScreenState extends State<PlayScreen>
                                     ),
                                     Expanded(
                                       child: Text(
-                                        state
-                                            .quizModel.data[widget.indexList].a,
+                                        state.quizModel.data[indexList].a,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontSize: 18,
@@ -255,7 +254,7 @@ class _PlayScreenState extends State<PlayScreen>
                       onTap: () {
                         quizBloc.add(QuizCheckResult(
                             ans: "b",
-                            indexList: widget.indexList,
+                            indexList: indexList,
                             quizModel: state.quizModel));
                         _dialogBuilder(context, state.quizModel);
                       },
@@ -296,8 +295,7 @@ class _PlayScreenState extends State<PlayScreen>
                                     ),
                                     Expanded(
                                       child: Text(
-                                        state
-                                            .quizModel.data[widget.indexList].b,
+                                        state.quizModel.data[indexList].b,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontSize: 18,
@@ -339,7 +337,7 @@ class _PlayScreenState extends State<PlayScreen>
                       onTap: () {
                         quizBloc.add(QuizCheckResult(
                             ans: "c",
-                            indexList: widget.indexList,
+                            indexList: indexList,
                             quizModel: state.quizModel));
                         _dialogBuilder(context, state.quizModel);
                       },
@@ -380,8 +378,7 @@ class _PlayScreenState extends State<PlayScreen>
                                     ),
                                     Expanded(
                                       child: Text(
-                                        state
-                                            .quizModel.data[widget.indexList].c,
+                                        state.quizModel.data[indexList].c,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontSize: 18,
@@ -423,7 +420,7 @@ class _PlayScreenState extends State<PlayScreen>
                       onTap: () {
                         quizBloc.add(QuizCheckResult(
                             ans: "d",
-                            indexList: widget.indexList,
+                            indexList: indexList,
                             quizModel: state.quizModel));
 
                         _dialogBuilder(context, state.quizModel);
@@ -465,8 +462,7 @@ class _PlayScreenState extends State<PlayScreen>
                                     ),
                                     Expanded(
                                       child: Text(
-                                        state
-                                            .quizModel.data[widget.indexList].d,
+                                        state.quizModel.data[indexList].d,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontSize: 18,
@@ -576,9 +572,9 @@ class _PlayScreenState extends State<PlayScreen>
                         children: [
                           Expanded(
                             child: Text(
-                              model!.data[widget.indexList].giaiThich.isEmpty
+                              model!.data[indexList].giaiThich.isEmpty
                                   ? "bạn thật tài giỏi"
-                                  : model.data[widget.indexList].giaiThich,
+                                  : model.data[indexList].giaiThich,
                               maxLines: 4,
                               overflow: TextOverflow.ellipsis,
                               style:
@@ -602,18 +598,6 @@ class _PlayScreenState extends State<PlayScreen>
                               ))),
                       child: GestureDetector(
                         onTap: () {
-                          // if (widget.indexList == model.data.length - 1) {
-                          //   widget.indexList = 0;
-                          // } else {
-                          //   widget.indexList++;
-                          // }
-                          // isCorrectA = false;
-                          // isCorrectB = false;
-                          // isCorrectC = false;
-                          // isCorrectD = false;
-                          // // print(quizBloc.state);
-                          // quizBloc.add(QuizSuccess(
-                          //     index: widget.indexList, model: model));
                           Navigator.pop(context);
                         },
                         child: const Center(
@@ -641,20 +625,20 @@ class _PlayScreenState extends State<PlayScreen>
         );
       },
     ).then((value) {
-      if (widget.indexList == model!.data.length - 1) {
-        widget.indexList = 0;
+      if (indexList == model!.data.length - 1) {
+        indexList = 0;
       } else {
-        widget.indexList++;
+        indexList++;
       }
       isCorrectA = false;
       isCorrectB = false;
       isCorrectC = false;
       isCorrectD = false;
       if (heart == 0) {
-        widget.indexList = 0;
+        indexList = 0;
         heart = 5;
       }
-      quizBloc.add(QuizSuccess(index: widget.indexList, model: model));
+      quizBloc.add(QuizSuccess(index: indexList, model: model));
     });
   }
 }
